@@ -38,15 +38,6 @@
     }
     .title{margin:0 0 6px; font-size:22px}
     .subtitle{margin:0; color:var(--muted)}
-    .chips{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap}
-    .chip{
-      border:1px solid var(--border);
-      background: rgba(124,196,255,.10);
-      color: var(--muted);
-      border-radius:999px;
-      padding:6px 10px;
-      font-size:12px;
-    }
 
     .nav{
       position:sticky; top:0;
@@ -163,12 +154,6 @@
         「Performance AnalyzerでDAXクエリ取得 → CokeGPTで整形 → DAX Studioで実行 → グリッドからCSV保存」
         を標準手順として固定する。
       </p>
-      <div class="chips">
-        <span class="chip">AI: CokeGPT 固定</span>
-        <span class="chip">画像: 1枚のみ</span>
-        <span class="chip">Server Timings: 不使用</span>
-        <span class="chip">出力: グリッドからCSV保存</span>
-      </div>
     </header>
 
     <nav class="nav">
@@ -188,7 +173,7 @@
           <li>取得したDAXクエリはそのままだと不要要素（例: TOPN(501) 等）が混入するため、CokeGPTで機械的に整形してから使う。</li>
         </ul>
         <p class="note">
-          パフォーマンス アナライザーで各ビジュアルのDAXクエリをコピーできることはMicrosoft Learnにも記載がある。 
+          パフォーマンス アナライザーで各ビジュアルのDAXクエリをコピーできることはMicrosoft Learnにも記載がある。
           <a href="https://learn.microsoft.com/ja-jp/power-bi/create-reports/performance-analyzer" target="_blank" rel="noopener">[Source]</a>
         </p>
       </section>
@@ -209,12 +194,12 @@
 
         <div class="imgbox">
           <img
-            src="https://www.genspark.ai/api/files/s/aBcfrQec"
+            src="./performance-analyzer.png"
             alt="Power BI Desktopの画面。リボンの「パフォーマンス アナライザー」と右ペイン内の「クエリのコピー」が赤枠で強調されているスクリーンショット。"
             loading="lazy"
           />
           <div class="caption">
-            本手順で使用する場所（「パフォーマンス アナライザー」「クエリのコピー」）が赤枠で示されたスクリーンショット。
+            「パフォーマンス アナライザー」「クエリのコピー」の位置が赤枠で示されたスクリーンショット（リポジトリ同梱）。
           </div>
         </div>
       </section>
@@ -637,7 +622,6 @@ ORDER BY
           btn.textContent = 'コピー済み';
           setTimeout(()=> btn.textContent = old, 1000);
         }catch(e){
-          // fallback
           const ta = document.createElement('textarea');
           ta.value = text;
           document.body.appendChild(ta);
