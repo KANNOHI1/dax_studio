@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DAX Studio まとめ（未経験者向け）</title>
+  <meta name="description" content="DAX Studioの概要、導入、最初に見るべき画面、公式リンク集（未経験者向け）" />
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a33;
+      --text:#e7ecff;
+      --muted:#b9c3ff;
+      --accent:#79b8ff;
+      --border:rgba(255,255,255,.12);
+      --chip:rgba(121,184,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #172a52 0%, var(--bg) 55%);
+      color:var(--text);
+      line-height:1.7;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1040px; margin:0 auto; padding:40px 18px 64px}
+    header{
+      padding:26px 22px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius:16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+    }
+    h1{margin:0 0 8px; font-size:28px}
+    .lead{margin:0; color:var(--muted)}
+    .chips{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
+    .chip{
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--chip);
+      color:var(--muted);
+      font-size:13px;
+    }
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px}
+    section{
+      border:1px solid var(--border);
+      background:rgba(15,26,51,.72);
+      border-radius:16px;
+      padding:18px 18px;
+    }
+    h2{margin:0 0 10px; font-size:18px}
+    h3{margin:14px 0 8px; font-size:16px}
+    .kvs{display:grid; gap:10px}
+    .kv{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 12px;
+      background:rgba(0,0,0,.12);
+    }
+    .kv-title{font-weight:700}
+    .img{
+      margin-top:12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      background:#0a1020;
+    }
+    .img img{display:block; width:100%; height:auto}
+    .caption{
+      padding:10px 12px;
+      font-size:13px;
+      color:var(--muted);
+      border-top:1px solid var(--border);
+      background:rgba(0,0,0,.10);
+    }
+    .note{color:var(--muted); font-size:14px}
+    footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+      opacity:.9;
+    }
+    code{background:rgba(255,255,255,.08); padding:2px 6px; border-radius:6px}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>[DAX Studio](https://daxstudio.org/) まとめ（未経験者向け）</h1>
+      <p class="lead">
+        DAX Studioは、Power BI Desktop 等のタブラー系モデルに接続し、DAXクエリを「書く・実行する・性能を分析する」ためのツール。
+        まずは <code>Server Timings</code> で計測→改善のループを回すのが最短。
+        <br />
+        公式: <a href="https://daxstudio.org/" target="_blank" rel="noopener">https://daxstudio.org/</a>
+        / GitHub: <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">https://github.com/DaxStudio/DaxStudio</a>
+      </p>
+
+      <div class="chips">
+        <span class="chip">閲覧: アカウント不要</span>
+        <span class="chip">用途: DAX実行・性能分析</span>
+        <span class="chip">対象: Power BI / Tabular</span>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>[DAX Studio](https://daxstudio.org/) とは</h2>
+        <div class="kvs">
+          <div class="kv">
+            <div class="kv-title">・何ができる？</div>
+            <div>・DAXクエリの作成・実行、実行結果とパフォーマンスの可視化（Server Timings等）</div>
+          </div>
+          <div class="kv">
+            <div class="kv-title">・誰が使う？</div>
+            <div>・Power BIで「遅い」「重い」を潰したい人、複雑なメジャーの動作確認をしたい人</div>
+          </div>
+        </div>
+
+        <p class="note">
+          参考: 公式の概要ページで「Powerful performance tuning tools（Server Timings等）」が紹介されている。 
+          <a href="https://daxstudio.org/" target="_blank" rel="noopener">公式サイト</a>
+        </p>
+      </section>
+
+      <section>
+        <h2>導入（インストール・起動）</h2>
+        <h3>ダウンロード</h3>
+        <div class="kv">
+          ・公式ダウンロード: <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">https://daxstudio.org/downloads/</a>
+        </div>
+
+        <h3>Power BI Desktopから起動できる理由（外部ツール連携）</h3>
+        <div class="kv">
+          ・Power BI Desktopの「外部ツール」リボンから起動すると、内部のAnalysis Servicesインスタンス情報がツールに渡り、自動接続できる。
+          <br />
+          ・参考: Microsoft Learn「外部ツール」説明
+          <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
+            https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools
+          </a>
+        </div>
+
+        <div class="img">
+          <img alt="Power BI Desktop 外部ツール リボン（Microsoft Learn）"
+               src="https://sspark.genspark.ai/cfimages?u1=MhcrICaMPQeVFSrZkPhYXvZXaNdCz5RcO37tHf3xBbKpVzvGKdYhgEfkLxMJGuMC0ZwTnz7%2BgUpdKQEdo4ckj5kUpkraKkixYBIF7ADJaqoXyTXln7fJrfUYxSc3VgGeLEwC48y%2B1j%2Bp1%2BITHvJYz5D%2BXm2B3zOdA88kYIZWF9pH&u2=PXLEQms6ScuS41wz&width=1024" />
+          <div class="caption">
+            Power BI Desktopの外部ツール リボン（Microsoft Learnより） [Source]
+            <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
+              desktop-external-tools
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>まず覚える画面（最短で戦力化）</h2>
+
+        <h3>Server Timings（性能計測の基本）</h3>
+        <div class="kv">
+          ・目的: DAX実行時の時間を取り、遅さの要因を切り分ける<br/>
+          ・最初の使い方: Server Timingsを有効化 → 実行 → 数字を見る → 修正 → 再計測
+        </div>
+
+        <div class="img">
+          <img alt="Server Timings（DAX Studio公式ドキュメント）"
+               src="https://sspark.genspark.ai/cfimages?u1=C0hkZChdJroWTUe7ZcGNxiftuXsiXbkQWb9LOtNeCxjm%2BD6fSfmtXFyoWmch0VC%2FFEzRcTmNEP40d71MZy5aaNNIou%2FJVJ0f%2Bs8QQr3vdd0TDh8lizdIZUh%2ByKOYmqzFxhwmrVCDyWxPGd3lv%2BYv8%2Bh9wMUIFOUm&u2=lTIDR9FvKRrmFuH1&width=2560" />
+          <div class="caption">
+            Server Timings（DAX Studio公式ドキュメントより） [Source]
+            <a href="https://daxstudio.org/docs/features/traces/server-timings-trace/" target="_blank" rel="noopener">
+              server-timings-trace
+            </a>
+          </div>
+        </div>
+
+        <h3>DAXクエリを「書いて実行する」（学習の入口）</h3>
+        <div class="kv">
+          ・未経験者が詰まりやすい点: 「メジャーのDAX」と「DAXクエリ（EVALUATE〜）」は別物<br/>
+          ・チュートリアル: <a href="https://daxstudio.org/docs/tutorials/writing-dax-queries/" target="_blank" rel="noopener">https://daxstudio.org/docs/tutorials/writing-dax-queries/</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>リンク集（公式）</h2>
+        <div class="kvs">
+          <div class="kv">
+            ・公式トップ: <a href="https://daxstudio.org/" target="_blank" rel="noopener">https://daxstudio.org/</a> [Source]
+            <a href="https://daxstudio.org/" target="_blank" rel="noopener">daxstudio.org</a>
+          </div>
+          <div class="kv">
+            ・公式ドキュメント入口: <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">https://daxstudio.org/docs/intro/</a> [Source]
+            <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">docs/intro</a>
+          </div>
+          <div class="kv">
+            ・ダウンロード: <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">https://daxstudio.org/downloads/</a> [Source]
+            <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">downloads</a>
+          </div>
+          <div class="kv">
+            ・GitHub: <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">https://github.com/DaxStudio/DaxStudio</a> [Source]
+            <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">DaxStudio/DaxStudio</a>
+          </div>
+          <div class="kv">
+            ・Power BI Desktop 外部ツール（Microsoft Learn）:
+            <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
+              https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools
+            </a>
+            [Source]
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      このページは社内共有用の要約。公式情報は各リンク先を参照。
+    </footer>
+  </div>
+</body>
+</html>
