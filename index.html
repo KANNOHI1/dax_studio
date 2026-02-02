@@ -30,7 +30,7 @@
       background: radial-gradient(1200px 800px at 15% 0%, #1b2d5e 0%, var(--bg) 55%);
       color:var(--text);
       line-height:1.75;
-      font-size:16px; /* fix: consistent base size on mobile too */
+      font-size:16px;
     }
 
     a{color:var(--accent); text-decoration:none}
@@ -60,24 +60,22 @@
       line-height:1.8;
     }
 
+    /* nav is now a card too (shared spec) */
     .nav{
       position:sticky;
       top:0;
       z-index:10;
       margin-top:var(--gap);
 
-      /* same card system */
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background: rgba(16,26,51,.72);
-      padding:12px var(--pad);
+      /* keep same padding as .card */
+      padding:var(--pad);
 
-      /* light blur is ok, but keep it subtle */
-      backdrop-filter: blur(8px);
+      /* avoid “different component” feel */
+      backdrop-filter:none;
     }
     .nav a{
       margin-right:12px;
-      font-size:13px;
+      font-size:14px;
       color:var(--muted);
       white-space:nowrap;
     }
@@ -86,7 +84,6 @@
     main{margin-top:var(--gap); display:grid; gap:var(--gap)}
 
     section{
-      /* enforce same card system everywhere */
       border:1px solid var(--border);
       border-radius:var(--radius);
       background: rgba(16,26,51,.72);
@@ -117,7 +114,7 @@
     .callout{
       border:1px solid var(--border);
       background: rgba(0,0,0,.14);
-      border-radius:12px; /* slightly smaller but consistent */
+      border-radius:12px;
       padding:12px;
     }
 
@@ -195,7 +192,6 @@
       opacity:.9;
     }
 
-    /* mobile-only: keep nav usable without changing content */
     @media (max-width: 520px){
       .nav{overflow:auto}
       .nav::-webkit-scrollbar{height:0}
@@ -214,7 +210,7 @@
       </p>
     </header>
 
-    <nav class="nav">
+    <nav class="card nav">
       <a href="#goal">目的</a>
       <a href="#workflow">手順</a>
       <a href="#prompt">CokeGPTプロンプト</a>
@@ -275,7 +271,7 @@
             <button class="btn" type="button" data-copybtn>コピー</button>
           </div>
           <pre data-codetext># Role
-あなたはDAXエンジニアリングの専門家です。提示されたDAXクエリを、VertiPaqエンジニアに最適化された最速の集計クエリに書き換えてください。
+あなたはDAXエンジニアリングの専門家です。提示されたDAXクエリを、VertiPaqエンジンに最適化された最速の集計クエリに書き換えてください。
 
 # Task Rule
 以下のステップに従って、リファクタリングを機械的に実行してください。
