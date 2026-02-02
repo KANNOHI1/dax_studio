@@ -15,9 +15,14 @@
       --muted:#b7c3ff;
       --accent:#7cc4ff;
       --border:rgba(255,255,255,.12);
-      --shadow: 0 18px 60px rgba(0,0,0,.35);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      /* unified sizing */
+      --radius:16px;
+      --pad:16px;
+      --gap:12px;
     }
+
     *{box-sizing:border-box}
     html,body{margin:0; padding:0}
     body{
@@ -25,64 +30,108 @@
       background: radial-gradient(1200px 800px at 15% 0%, #1b2d5e 0%, var(--bg) 55%);
       color:var(--text);
       line-height:1.75;
+      font-size:16px; /* fix: consistent base size on mobile too */
     }
+
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
+
     .wrap{max-width:1080px; margin:0 auto; padding:28px 16px 64px}
-    .top{
+
+    /* unified card */
+    .card{
       border:1px solid var(--border);
-      border-radius:16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
-      padding:18px 18px;
+      border-radius:var(--radius);
+      background: rgba(16,26,51,.72);
+      padding:var(--pad);
     }
-    .title{margin:0 0 6px; font-size:22px}
-    .subtitle{margin:0; color:var(--muted)}
+
+    /* typography: unified scale */
+    .title{
+      margin:0 0 8px;
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.8;
+    }
 
     .nav{
-      position:sticky; top:0;
-      margin-top:12px;
+      position:sticky;
+      top:0;
       z-index:10;
+      margin-top:var(--gap);
+
+      /* same card system */
       border:1px solid var(--border);
-      border-radius:14px;
-      background: rgba(10,16,32,.82);
-      backdrop-filter: blur(10px);
-      padding:10px 12px;
-    }
-    .nav a{margin-right:12px; font-size:13px; color:var(--muted)}
-    .nav a:hover{color:var(--text)}
-    main{margin-top:12px; display:grid; gap:12px}
-    section{
-      border:1px solid var(--border);
-      border-radius:16px;
+      border-radius:var(--radius);
       background: rgba(16,26,51,.72);
-      padding:16px 16px;
+      padding:12px var(--pad);
+
+      /* light blur is ok, but keep it subtle */
+      backdrop-filter: blur(8px);
     }
+    .nav a{
+      margin-right:12px;
+      font-size:13px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .nav a:hover{color:var(--text)}
+
+    main{margin-top:var(--gap); display:grid; gap:var(--gap)}
+
+    section{
+      /* enforce same card system everywhere */
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: rgba(16,26,51,.72);
+      padding:var(--pad);
+    }
+
     h2{
-      margin:0 0 10px; font-size:16px;
-      display:flex; gap:10px; align-items:center;
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.2px;
+      display:flex;
+      gap:10px;
+      align-items:baseline;
     }
-    h2 .anchor{font-size:12px; color:var(--muted)}
+    h2 .anchor{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+    }
+
     .note{color:var(--muted); font-size:14px; margin:0}
+
     .bullets{margin:10px 0 0; padding-left:0; list-style:none}
     .bullets li{margin:6px 0}
     .bullets li::before{content:"・"; margin-right:6px; color:var(--accent)}
+
     .callout{
       border:1px solid var(--border);
       background: rgba(0,0,0,.14);
-      border-radius:14px;
-      padding:12px 12px;
+      border-radius:12px; /* slightly smaller but consistent */
+      padding:12px;
     }
+
     .imgbox{
       margin-top:12px;
       border:1px solid var(--border);
-      border-radius:14px;
+      border-radius:12px;
       overflow:hidden;
       background: var(--panel2);
     }
     .imgbox img{width:100%; height:auto; display:block}
     .caption{
-      font-size:12px; color:var(--muted);
+      font-size:12px;
+      color:var(--muted);
       padding:10px 12px;
       border-top:1px solid var(--border);
       background: rgba(0,0,0,.10);
@@ -90,7 +139,7 @@
 
     .codewrap{
       border:1px solid var(--border);
-      border-radius:14px;
+      border-radius:12px;
       overflow:hidden;
       background: rgba(0,0,0,.18);
     }
@@ -114,6 +163,7 @@
       font-size:12px;
     }
     .btn:hover{background: rgba(124,196,255,.18)}
+
     pre{
       margin:0;
       padding:12px 12px;
@@ -125,6 +175,7 @@
       white-space:pre;
       tab-size:2;
     }
+
     .faq{margin-top:8px}
     details{
       border:1px solid var(--border);
@@ -133,8 +184,9 @@
       padding:10px 12px;
       margin:8px 0;
     }
-    summary{cursor:pointer; color:var(--text); font-weight:700}
+    summary{cursor:pointer; color:var(--text); font-weight:800}
     .small{font-size:13px; color:var(--muted); margin:8px 0 0}
+
     footer{
       margin-top:14px;
       text-align:center;
@@ -142,12 +194,18 @@
       font-size:12px;
       opacity:.9;
     }
+
+    /* mobile-only: keep nav usable without changing content */
+    @media (max-width: 520px){
+      .nav{overflow:auto}
+      .nav::-webkit-scrollbar{height:0}
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <header class="top">
+    <header class="card">
       <h1 class="title">DAX Studio × CokeGPT 実務手順（Performance Analyzer → CSV抽出）</h1>
       <p class="subtitle">
         Power BIのデータレイク接続モデルが巨大で、画面操作やエクスポートが現実的に回らないケースに対して、
@@ -217,7 +275,7 @@
             <button class="btn" type="button" data-copybtn>コピー</button>
           </div>
           <pre data-codetext># Role
-あなたはDAXエンジニアリングの専門家です。提示されたDAXクエリを、VertiPaqエンジンに最適化された最速の集計クエリに書き換えてください。
+あなたはDAXエンジニアリングの専門家です。提示されたDAXクエリを、VertiPaqエンジニアに最適化された最速の集計クエリに書き換えてください。
 
 # Task Rule
 以下のステップに従って、リファクタリングを機械的に実行してください。
@@ -330,222 +388,7 @@ DEFINE
 			"CT", 'Volume'[CT],
 			"PT", 'Volume'[PT],
 			"Btlr_Net_Rev__bef_Bulk_Disc", 'Finance'[Btlr Net Rev. bef Bulk Disc]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(
-			501,
-			__DS0Core,
-			'445 Time'[YearID],
-			1,
-			'445 Time'[YearDescription],
-			1,
-			'445 Time'[QuarterID],
-			1,
-			'445 Time'[QuarterDescription],
-			1,
-			'445 Time'[PeriodDescription],
-			1,
-			'445 Time'[WeekID],
-			1,
-			'445 Time'[WeekDescription],
-			1,
-			'McD'[McD],
-			1,
-			'PM_RPP Channel'[PMChannelGroupCategorySequence],
-			1,
-			'PM_RPP Channel'[PMChannelGroupCategoryName],
-			1,
-			'PM_RPP Channel'[PMChannelGroupSequence],
-			1,
-			'PM_RPP Channel'[PMChannelGroupName],
-			1,
-			'Account'[KeyAccountTypeSequence],
-			1,
-			'Account'[KeyAccountTypeName],
-			1,
-			'Account'[AccountGroupCategoryCode],
-			1,
-			'Account'[AccountGroupCategoryName],
-			1,
-			'Account'[AccountGroupCode],
-			1,
-			'Account'[AccountGroupName],
-			1,
-			'Bottler'[All_Japan],
-			1,
-			'Bottler'[AreaGroupSequence],
-			1,
-			'Bottler'[AreaGroupName],
-			1,
-			'Bottler'[AreaSequence],
-			1,
-			'Bottler'[AreaName],
-			1,
-			'Bottler'[BottlerSequence],
-			1,
-			'Bottler'[BottlerName],
-			1,
-			'Bottler'[RegionSequence],
-			1,
-			'Bottler'[RegionName],
-			1,
-			'Bottler'[SubRegionName],
-			1,
-			'Product'[Category_OrderKey],
-			1,
-			'Product'[CategoryName],
-			1,
-			'Product'[PMBrandGroupSequence],
-			1,
-			'Product'[PMBrandGroupName],
-			1,
-			'Product'[PMBrandSequence],
-			1,
-			'Product'[PMBrandName],
-			1,
-			'Product'[BeverageCategoryCode],
-			1,
-			'Product'[BeverageCategoryName],
-			1,
-			'Product'[BeverageSubCategory_OrderKey],
-			1,
-			'Product'[BeverageSubCategoryName],
-			1,
-			'Product'[TM_OrderKey],
-			1,
-			'Product'[TrademarkName],
-			1,
-			'Product'[Brand_OrderKey],
-			1,
-			'Product'[BrandName],
-			1,
-			'Product'[BPGroup1_OrderKey],
-			1,
-			'Product'[BeverageProductGroup1Name],
-			1,
-			'Product'[BPGroup2_OrderKey],
-			1,
-			'Product'[BeverageProductGroup2Name],
-			1,
-			'Product'[BPGroup_OrderKey],
-			1,
-			'Product'[BeverageProductGroupName],
-			1,
-			'Product'[BevProduct_OrderKey],
-			1,
-			'Product'[BeverageProductName],
-			1,
-			'Product'[ProductGroupCategoryName],
-			1,
-			'Product'[ProductGroup2_OrderKey],
-			1,
-			'Product'[ProductGroupName],
-			1,
-			'Product'[ProductName],
-			1,
-			'Product'[ServiceTypeCode],
-			1,
-			'Product'[ServiceTypeName],
-			1,
-			'Product'[PackageType_OrderKey],
-			1,
-			'Product'[PackageTypeName],
-			1,
-			'Product'[PackageSize1_OrderKey],
-			1,
-			'Product'[PackageSizeGroupName],
-			1,
-			'Product'[PackageSize2_OrderKey],
-			1,
-			'Product'[PackageSizeName],
-			1,
-			'Product'[Package_OrderKey],
-			1,
-			'Product'[PackageName],
-			1,
-			'Product'[MultiTypeSequence],
-			1,
-			'Product'[MultiTypeName],
-			1,
-			'Product'[ServingCode],
-			1,
-			'Product'[ServingName],
-			1
-		)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	'445 Time'[YearID],
-	'445 Time'[YearDescription],
-	'445 Time'[QuarterID],
-	'445 Time'[QuarterDescription],
-	'445 Time'[PeriodDescription],
-	'445 Time'[WeekID],
-	'445 Time'[WeekDescription],
-	'McD'[McD],
-	'PM_RPP Channel'[PMChannelGroupCategorySequence],
-	'PM_RPP Channel'[PMChannelGroupCategoryName],
-	'PM_RPP Channel'[PMChannelGroupSequence],
-	'PM_RPP Channel'[PMChannelGroupName],
-	'Account'[KeyAccountTypeSequence],
-	'Account'[KeyAccountTypeName],
-	'Account'[AccountGroupCategoryCode],
-	'Account'[AccountGroupCategoryName],
-	'Account'[AccountGroupCode],
-	'Account'[AccountGroupName],
-	'Bottler'[All_Japan],
-	'Bottler'[AreaGroupSequence],
-	'Bottler'[AreaGroupName],
-	'Bottler'[AreaSequence],
-	'Bottler'[AreaName],
-	'Bottler'[BottlerSequence],
-	'Bottler'[BottlerName],
-	'Bottler'[RegionSequence],
-	'Bottler'[RegionName],
-	'Bottler'[SubRegionName],
-	'Product'[Category_OrderKey],
-	'Product'[CategoryName],
-	'Product'[PMBrandGroupSequence],
-	'Product'[PMBrandGroupName],
-	'Product'[PMBrandSequence],
-	'Product'[PMBrandName],
-	'Product'[BeverageCategoryCode],
-	'Product'[BeverageCategoryName],
-	'Product'[BeverageSubCategory_OrderKey],
-	'Product'[BeverageSubCategoryName],
-	'Product'[TM_OrderKey],
-	'Product'[TrademarkName],
-	'Product'[Brand_OrderKey],
-	'Product'[BrandName],
-	'Product'[BPGroup1_OrderKey],
-	'Product'[BeverageProductGroup1Name],
-	'Product'[BPGroup2_OrderKey],
-	'Product'[BeverageProductGroup2Name],
-	'Product'[BPGroup_OrderKey],
-	'Product'[BeverageProductGroupName],
-	'Product'[BevProduct_OrderKey],
-	'Product'[BeverageProductName],
-	'Product'[ProductGroupCategoryName],
-	'Product'[ProductGroup2_OrderKey],
-	'Product'[ProductGroupName],
-	'Product'[ProductName],
-	'Product'[ServiceTypeCode],
-	'Product'[ServiceTypeName],
-	'Product'[PackageType_OrderKey],
-	'Product'[PackageTypeName],
-	'Product'[PackageSize1_OrderKey],
-	'Product'[PackageSizeGroupName],
-	'Product'[PackageSize2_OrderKey],
-	'Product'[PackageSizeName],
-	'Product'[Package_OrderKey],
-	'Product'[PackageName],
-	'Product'[MultiTypeSequence],
-	'Product'[MultiTypeName],
-	'Product'[ServingCode],
-	'Product'[ServingName]</pre>
+		)</pre>
         </div>
 
         <p class="small">
