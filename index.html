@@ -3,218 +3,653 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DAX Studio まとめ（未経験者向け）</title>
-  <meta name="description" content="DAX Studioの概要、導入、最初に見るべき画面、公式リンク集（未経験者向け）" />
+  <title>DAX Studio × CokeGPT 実務手順（Performance Analyzer → CSV抽出）</title>
+  <meta name="description" content="Power BIのPerformance AnalyzerでDAXを取得し、CokeGPTで整形してDAX StudioでCSV抽出する実務手順" />
+
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:#0f1a33;
-      --text:#e7ecff;
-      --muted:#b9c3ff;
-      --accent:#79b8ff;
+      --bg:#0b1020;
+      --panel:#101a33;
+      --panel2:#0d1428;
+      --text:#e8eeff;
+      --muted:#b7c3ff;
+      --accent:#7cc4ff;
       --border:rgba(255,255,255,.12);
-      --chip:rgba(121,184,255,.12);
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     *{box-sizing:border-box}
+    html,body{margin:0; padding:0}
     body{
-      margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #172a52 0%, var(--bg) 55%);
+      background: radial-gradient(1200px 800px at 15% 0%, #1b2d5e 0%, var(--bg) 55%);
       color:var(--text);
-      line-height:1.7;
+      line-height:1.75;
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
-    .wrap{max-width:1040px; margin:0 auto; padding:40px 18px 64px}
-    header{
-      padding:26px 22px;
+    .wrap{max-width:1080px; margin:0 auto; padding:28px 16px 64px}
+    .top{
       border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       border-radius:16px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-    }
-    h1{margin:0 0 8px; font-size:28px}
-    .lead{margin:0; color:var(--muted)}
-    .chips{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
-    .chip{
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:var(--chip);
-      color:var(--muted);
-      font-size:13px;
-    }
-    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px}
-    section{
-      border:1px solid var(--border);
-      background:rgba(15,26,51,.72);
-      border-radius:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
       padding:18px 18px;
     }
-    h2{margin:0 0 10px; font-size:18px}
-    h3{margin:14px 0 8px; font-size:16px}
-    .kvs{display:grid; gap:10px}
-    .kv{
+    .title{margin:0 0 6px; font-size:22px}
+    .subtitle{margin:0; color:var(--muted)}
+    .chips{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--border);
+      background: rgba(124,196,255,.10);
+      color: var(--muted);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+    }
+
+    .nav{
+      position:sticky; top:0;
+      margin-top:12px;
+      z-index:10;
       border:1px solid var(--border);
       border-radius:14px;
-      padding:12px 12px;
-      background:rgba(0,0,0,.12);
+      background: rgba(10,16,32,.82);
+      backdrop-filter: blur(10px);
+      padding:10px 12px;
     }
-    .kv-title{font-weight:700}
-    .img{
+    .nav a{margin-right:12px; font-size:13px; color:var(--muted)}
+    .nav a:hover{color:var(--text)}
+    main{margin-top:12px; display:grid; gap:12px}
+    section{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background: rgba(16,26,51,.72);
+      padding:16px 16px;
+    }
+    h2{
+      margin:0 0 10px; font-size:16px;
+      display:flex; gap:10px; align-items:center;
+    }
+    h2 .anchor{font-size:12px; color:var(--muted)}
+    .note{color:var(--muted); font-size:14px; margin:0}
+    .bullets{margin:10px 0 0; padding-left:0; list-style:none}
+    .bullets li{margin:6px 0}
+    .bullets li::before{content:"・"; margin-right:6px; color:var(--accent)}
+    .callout{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.14);
+      border-radius:14px;
+      padding:12px 12px;
+    }
+    .imgbox{
       margin-top:12px;
       border:1px solid var(--border);
       border-radius:14px;
       overflow:hidden;
-      background:#0a1020;
+      background: var(--panel2);
     }
-    .img img{display:block; width:100%; height:auto}
+    .imgbox img{width:100%; height:auto; display:block}
     .caption{
+      font-size:12px; color:var(--muted);
       padding:10px 12px;
-      font-size:13px;
-      color:var(--muted);
       border-top:1px solid var(--border);
-      background:rgba(0,0,0,.10);
+      background: rgba(0,0,0,.10);
     }
-    .note{color:var(--muted); font-size:14px}
+
+    .codewrap{
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      background: rgba(0,0,0,.18);
+    }
+    .codebar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 12px;
+      border-bottom:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      gap:10px;
+    }
+    .codebar .label{font-size:12px; color:var(--muted)}
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(124,196,255,.12);
+      color: var(--text);
+      border-radius:10px;
+      padding:7px 10px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .btn:hover{background: rgba(124,196,255,.18)}
+    pre{
+      margin:0;
+      padding:12px 12px;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:12px;
+      line-height:1.6;
+      color:#eaf0ff;
+      white-space:pre;
+      tab-size:2;
+    }
+    .faq{margin-top:8px}
+    details{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background: rgba(0,0,0,.12);
+      padding:10px 12px;
+      margin:8px 0;
+    }
+    summary{cursor:pointer; color:var(--text); font-weight:700}
+    .small{font-size:13px; color:var(--muted); margin:8px 0 0}
     footer{
-      margin-top:16px;
-      color:var(--muted);
-      font-size:13px;
+      margin-top:14px;
       text-align:center;
+      color:var(--muted);
+      font-size:12px;
       opacity:.9;
     }
-    code{background:rgba(255,255,255,.08); padding:2px 6px; border-radius:6px}
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <header>
-      <h1>[DAX Studio](https://daxstudio.org/) まとめ（未経験者向け）</h1>
-      <p class="lead">
-        DAX Studioは、Power BI Desktop 等のタブラー系モデルに接続し、DAXクエリを「書く・実行する・性能を分析する」ためのツール。
-        まずは <code>Server Timings</code> で計測→改善のループを回すのが最短。
-        <br />
-        公式: <a href="https://daxstudio.org/" target="_blank" rel="noopener">https://daxstudio.org/</a>
-        / GitHub: <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">https://github.com/DaxStudio/DaxStudio</a>
+    <header class="top">
+      <h1 class="title">DAX Studio × CokeGPT 実務手順（Performance Analyzer → CSV抽出）</h1>
+      <p class="subtitle">
+        Power BIのデータレイク接続モデルが巨大で、画面操作やエクスポートが現実的に回らないケースに対して、
+        「Performance AnalyzerでDAXクエリ取得 → CokeGPTで整形 → DAX Studioで実行 → グリッドからCSV保存」
+        を標準手順として固定する。
       </p>
-
       <div class="chips">
-        <span class="chip">閲覧: アカウント不要</span>
-        <span class="chip">用途: DAX実行・性能分析</span>
-        <span class="chip">対象: Power BI / Tabular</span>
+        <span class="chip">AI: CokeGPT 固定</span>
+        <span class="chip">画像: 1枚のみ</span>
+        <span class="chip">Server Timings: 不使用</span>
+        <span class="chip">出力: グリッドからCSV保存</span>
       </div>
     </header>
 
-    <main>
-      <section>
-        <h2>[DAX Studio](https://daxstudio.org/) とは</h2>
-        <div class="kvs">
-          <div class="kv">
-            <div class="kv-title">・何ができる？</div>
-            <div>・DAXクエリの作成・実行、実行結果とパフォーマンスの可視化（Server Timings等）</div>
-          </div>
-          <div class="kv">
-            <div class="kv-title">・誰が使う？</div>
-            <div>・Power BIで「遅い」「重い」を潰したい人、複雑なメジャーの動作確認をしたい人</div>
-          </div>
-        </div>
+    <nav class="nav">
+      <a href="#goal">目的</a>
+      <a href="#workflow">手順</a>
+      <a href="#prompt">CokeGPTプロンプト</a>
+      <a href="#faq">よくある失敗</a>
+      <a href="#refs">参照</a>
+    </nav>
 
+    <main>
+      <section id="goal">
+        <h2><span class="anchor">#goal</span> 目的</h2>
+        <ul class="bullets">
+          <li>Power BI上で必要なデータを「欲しい粒度・列」で取り出したいが、データ量が大きく、通常のエクスポートが制約に当たりやすい。</li>
+          <li>Power BIのパフォーマンス アナライザーで「実際にビジュアルが叩いているDAXクエリ」を取得し、別ツール（DAX Studio）で再実行してCSV化する。</li>
+          <li>取得したDAXクエリはそのままだと不要要素（例: TOPN(501) 等）が混入するため、CokeGPTで機械的に整形してから使う。</li>
+        </ul>
         <p class="note">
-          参考: 公式の概要ページで「Powerful performance tuning tools（Server Timings等）」が紹介されている。 
-          <a href="https://daxstudio.org/" target="_blank" rel="noopener">公式サイト</a>
+          パフォーマンス アナライザーで各ビジュアルのDAXクエリをコピーできることはMicrosoft Learnにも記載がある。 
+          <a href="https://learn.microsoft.com/ja-jp/power-bi/create-reports/performance-analyzer" target="_blank" rel="noopener">[Source]</a>
         </p>
       </section>
 
-      <section>
-        <h2>導入（インストール・起動）</h2>
-        <h3>ダウンロード</h3>
-        <div class="kv">
-          ・公式ダウンロード: <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">https://daxstudio.org/downloads/</a>
+      <section id="workflow">
+        <h2><span class="anchor">#workflow</span> 手順（Power BI → CokeGPT → DAX Studio → CSV）</h2>
+
+        <div class="callout">
+          <ul class="bullets">
+            <li>Power BI Desktopで、欲しいデータが表示されるビジュアル（テーブル/マトリクス等）を表示する。</li>
+            <li>「パフォーマンス アナライザー」を開き、記録して対象ビジュアルを更新する。</li>
+            <li>対象ビジュアルのログから「クエリのコピー」でDAXクエリを取得する。</li>
+            <li>取得したDAXクエリをCokeGPTに渡し、整形後のDAXクエリだけを出力させる（プロンプトは下記固定）。</li>
+            <li>DAX Studio（社内データレイク接続のモデルに接続済みの状態）へ、CokeGPTの出力DAXを貼り付けて実行する。</li>
+            <li>結果グリッドをCSVとして保存する。</li>
+          </ul>
         </div>
 
-        <h3>Power BI Desktopから起動できる理由（外部ツール連携）</h3>
-        <div class="kv">
-          ・Power BI Desktopの「外部ツール」リボンから起動すると、内部のAnalysis Servicesインスタンス情報がツールに渡り、自動接続できる。
-          <br />
-          ・参考: Microsoft Learn「外部ツール」説明
-          <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
-            https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools
-          </a>
-        </div>
-
-        <div class="img">
-          <img alt="Power BI Desktop 外部ツール リボン（Microsoft Learn）"
-               src="https://sspark.genspark.ai/cfimages?u1=MhcrICaMPQeVFSrZkPhYXvZXaNdCz5RcO37tHf3xBbKpVzvGKdYhgEfkLxMJGuMC0ZwTnz7%2BgUpdKQEdo4ckj5kUpkraKkixYBIF7ADJaqoXyTXln7fJrfUYxSc3VgGeLEwC48y%2B1j%2Bp1%2BITHvJYz5D%2BXm2B3zOdA88kYIZWF9pH&u2=PXLEQms6ScuS41wz&width=1024" />
+        <div class="imgbox">
+          <img
+            src="https://www.genspark.ai/api/files/s/aBcfrQec"
+            alt="Power BI Desktopの画面。リボンの「パフォーマンス アナライザー」と右ペイン内の「クエリのコピー」が赤枠で強調されているスクリーンショット。"
+            loading="lazy"
+          />
           <div class="caption">
-            Power BI Desktopの外部ツール リボン（Microsoft Learnより） [Source]
-            <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
-              desktop-external-tools
-            </a>
+            本手順で使用する場所（「パフォーマンス アナライザー」「クエリのコピー」）が赤枠で示されたスクリーンショット。
           </div>
         </div>
       </section>
 
-      <section>
-        <h2>まず覚える画面（最短で戦力化）</h2>
+      <section id="prompt">
+        <h2><span class="anchor">#prompt</span> CokeGPT 整形プロンプト（固定）</h2>
+        <p class="note">
+          運用ルールは単純。「# Target Query」より下に、Performance AnalyzerでコピーしたDAXクエリ全文を貼るだけ。
+          CokeGPTの出力は「コードブロック内のDAXクエリのみ」が返る前提。
+        </p>
 
-        <h3>Server Timings（性能計測の基本）</h3>
-        <div class="kv">
-          ・目的: DAX実行時の時間を取り、遅さの要因を切り分ける<br/>
-          ・最初の使い方: Server Timingsを有効化 → 実行 → 数字を見る → 修正 → 再計測
-        </div>
-
-        <div class="img">
-          <img alt="Server Timings（DAX Studio公式ドキュメント）"
-               src="https://sspark.genspark.ai/cfimages?u1=C0hkZChdJroWTUe7ZcGNxiftuXsiXbkQWb9LOtNeCxjm%2BD6fSfmtXFyoWmch0VC%2FFEzRcTmNEP40d71MZy5aaNNIou%2FJVJ0f%2Bs8QQr3vdd0TDh8lizdIZUh%2ByKOYmqzFxhwmrVCDyWxPGd3lv%2BYv8%2Bh9wMUIFOUm&u2=lTIDR9FvKRrmFuH1&width=2560" />
-          <div class="caption">
-            Server Timings（DAX Studio公式ドキュメントより） [Source]
-            <a href="https://daxstudio.org/docs/features/traces/server-timings-trace/" target="_blank" rel="noopener">
-              server-timings-trace
-            </a>
+        <div class="codewrap" data-copywrap>
+          <div class="codebar">
+            <div class="label">コピペ用（このままCokeGPTに渡す）</div>
+            <button class="btn" type="button" data-copybtn>コピー</button>
           </div>
+          <pre data-codetext># Role
+あなたはDAXエンジニアリングの専門家です。提示されたDAXクエリを、VertiPaqエンジンに最適化された最速の集計クエリに書き換えてください。
+
+# Task Rule
+以下のステップに従って、リファクタリングを機械的に実行してください。
+
+## Step 1: 不要列の物理的削除
+以下の条件に該当する列を、SUMMARIZECOLUMNSの引数から完全に削除してください。
+- 列名の末尾が「ID」「Code」「Sequence」「OrderKey」であるもの
+- 列名が「IsGrandTotalRowTotal」であるもの
+
+## Step 2: 構文の簡素化
+1. 「TOPN句」および「ORDER BY句」をすべて削除し、全件抽出に変更してください。
+2. フィルター条件はすべて「DEFINE」句内の「VAR」として定義してください。
+3. フィルターには `TREATAS` を優先的に使用してください。
+
+## Step 3: 動的フィルタの自動注入（重要）
+元のクエリを解析し、以下のロジックを必ず実行してコードに組み込んでください。
+1. **時間軸の特定**: 列名に「Year」「Date」「Calendar」を含む、または年次データを表す列（[TimeCol]と呼称）を特定してください。
+2. **空白除外ロジック**: 特定した[TimeCol]に対し、必ず `VAR __FilterNoBlank = FILTER(ALL([TimeCol]), NOT ISBLANK([TimeCol]))` を定義してください。
+3. **反映**: `SUMMARIZECOLUMNS` のフィルタ引数セクションに、この `__FilterNoBlank` を必ず含めてください。該当する列が一切ない場合のみ、この手順をスキップしてください。
+
+## Step 4: 出力の構造化
+SUMMARIZECOLUMNS内は、以下の順序で記述してください。
+1. グループ化列（'テーブル'[列名]）をテーブルごとにまとめて記述。
+2. Step 3で作った変数を含む、すべてのフィルタ用変数を記述。
+3. メジャーを "名前", [メジャー名] の形式で記述（メジャーにはテーブル名を付けないこと）。
+
+# Output Format
+- 説明、挨拶、補足、考察は一切禁止します。
+- リファクタリング後のDAXクエリのみをコードブロックで出力してください。
+
+# Target Query
+// DAX Query
+DEFINE
+	VAR __DS0FilterTable = 
+		TREATAS({"202301"}, '445 Time'[WeekDescription])
+
+	VAR __DS0Core = 
+		SUMMARIZECOLUMNS(
+			'445 Time'[YearDescription],
+			'445 Time'[YearID],
+			'445 Time'[QuarterDescription],
+			'445 Time'[QuarterID],
+			'445 Time'[PeriodDescription],
+			'445 Time'[WeekDescription],
+			'445 Time'[WeekID],
+			'McD'[McD],
+			'PM_RPP Channel'[PMChannelGroupCategoryName],
+			'PM_RPP Channel'[PMChannelGroupCategorySequence],
+			'PM_RPP Channel'[PMChannelGroupName],
+			'PM_RPP Channel'[PMChannelGroupSequence],
+			'Account'[KeyAccountTypeName],
+			'Account'[KeyAccountTypeSequence],
+			'Account'[AccountGroupCategoryName],
+			'Account'[AccountGroupCategoryCode],
+			'Account'[AccountGroupName],
+			'Account'[AccountGroupCode],
+			'Bottler'[All_Japan],
+			'Bottler'[AreaGroupName],
+			'Bottler'[AreaGroupSequence],
+			'Bottler'[AreaName],
+			'Bottler'[AreaSequence],
+			'Bottler'[BottlerName],
+			'Bottler'[BottlerSequence],
+			'Bottler'[RegionName],
+			'Bottler'[RegionSequence],
+			'Bottler'[SubRegionName],
+			'Product'[CategoryName],
+			'Product'[Category_OrderKey],
+			'Product'[PMBrandGroupName],
+			'Product'[PMBrandGroupSequence],
+			'Product'[PMBrandName],
+			'Product'[PMBrandSequence],
+			'Product'[BeverageCategoryName],
+			'Product'[BeverageCategoryCode],
+			'Product'[BeverageSubCategoryName],
+			'Product'[BeverageSubCategory_OrderKey],
+			'Product'[TrademarkName],
+			'Product'[TM_OrderKey],
+			'Product'[BrandName],
+			'Product'[Brand_OrderKey],
+			'Product'[BeverageProductGroup1Name],
+			'Product'[BPGroup1_OrderKey],
+			'Product'[BeverageProductGroup2Name],
+			'Product'[BPGroup2_OrderKey],
+			'Product'[BeverageProductGroupName],
+			'Product'[BPGroup_OrderKey],
+			'Product'[BeverageProductName],
+			'Product'[BevProduct_OrderKey],
+			'Product'[ProductGroupCategoryName],
+			'Product'[ProductGroupName],
+			'Product'[ProductGroup2_OrderKey],
+			'Product'[ProductName],
+			'Product'[ServiceTypeName],
+			'Product'[ServiceTypeCode],
+			'Product'[PackageTypeName],
+			'Product'[PackageType_OrderKey],
+			'Product'[PackageSizeGroupName],
+			'Product'[PackageSize1_OrderKey],
+			'Product'[PackageSizeName],
+			'Product'[PackageSize2_OrderKey],
+			'Product'[PackageName],
+			'Product'[Package_OrderKey],
+			'Product'[MultiTypeName],
+			'Product'[MultiTypeSequence],
+			'Product'[ServingName],
+			'Product'[ServingCode],
+			__DS0FilterTable,
+			"UNT", 'Volume'[UNT],
+			"PC", 'Volume'[PC],
+			"CT", 'Volume'[CT],
+			"PT", 'Volume'[PT],
+			"Btlr_Net_Rev__bef_Bulk_Disc", 'Finance'[Btlr Net Rev. bef Bulk Disc]
+		)
+
+	VAR __DS0PrimaryWindowed = 
+		TOPN(
+			501,
+			__DS0Core,
+			'445 Time'[YearID],
+			1,
+			'445 Time'[YearDescription],
+			1,
+			'445 Time'[QuarterID],
+			1,
+			'445 Time'[QuarterDescription],
+			1,
+			'445 Time'[PeriodDescription],
+			1,
+			'445 Time'[WeekID],
+			1,
+			'445 Time'[WeekDescription],
+			1,
+			'McD'[McD],
+			1,
+			'PM_RPP Channel'[PMChannelGroupCategorySequence],
+			1,
+			'PM_RPP Channel'[PMChannelGroupCategoryName],
+			1,
+			'PM_RPP Channel'[PMChannelGroupSequence],
+			1,
+			'PM_RPP Channel'[PMChannelGroupName],
+			1,
+			'Account'[KeyAccountTypeSequence],
+			1,
+			'Account'[KeyAccountTypeName],
+			1,
+			'Account'[AccountGroupCategoryCode],
+			1,
+			'Account'[AccountGroupCategoryName],
+			1,
+			'Account'[AccountGroupCode],
+			1,
+			'Account'[AccountGroupName],
+			1,
+			'Bottler'[All_Japan],
+			1,
+			'Bottler'[AreaGroupSequence],
+			1,
+			'Bottler'[AreaGroupName],
+			1,
+			'Bottler'[AreaSequence],
+			1,
+			'Bottler'[AreaName],
+			1,
+			'Bottler'[BottlerSequence],
+			1,
+			'Bottler'[BottlerName],
+			1,
+			'Bottler'[RegionSequence],
+			1,
+			'Bottler'[RegionName],
+			1,
+			'Bottler'[SubRegionName],
+			1,
+			'Product'[Category_OrderKey],
+			1,
+			'Product'[CategoryName],
+			1,
+			'Product'[PMBrandGroupSequence],
+			1,
+			'Product'[PMBrandGroupName],
+			1,
+			'Product'[PMBrandSequence],
+			1,
+			'Product'[PMBrandName],
+			1,
+			'Product'[BeverageCategoryCode],
+			1,
+			'Product'[BeverageCategoryName],
+			1,
+			'Product'[BeverageSubCategory_OrderKey],
+			1,
+			'Product'[BeverageSubCategoryName],
+			1,
+			'Product'[TM_OrderKey],
+			1,
+			'Product'[TrademarkName],
+			1,
+			'Product'[Brand_OrderKey],
+			1,
+			'Product'[BrandName],
+			1,
+			'Product'[BPGroup1_OrderKey],
+			1,
+			'Product'[BeverageProductGroup1Name],
+			1,
+			'Product'[BPGroup2_OrderKey],
+			1,
+			'Product'[BeverageProductGroup2Name],
+			1,
+			'Product'[BPGroup_OrderKey],
+			1,
+			'Product'[BeverageProductGroupName],
+			1,
+			'Product'[BevProduct_OrderKey],
+			1,
+			'Product'[BeverageProductName],
+			1,
+			'Product'[ProductGroupCategoryName],
+			1,
+			'Product'[ProductGroup2_OrderKey],
+			1,
+			'Product'[ProductGroupName],
+			1,
+			'Product'[ProductName],
+			1,
+			'Product'[ServiceTypeCode],
+			1,
+			'Product'[ServiceTypeName],
+			1,
+			'Product'[PackageType_OrderKey],
+			1,
+			'Product'[PackageTypeName],
+			1,
+			'Product'[PackageSize1_OrderKey],
+			1,
+			'Product'[PackageSizeGroupName],
+			1,
+			'Product'[PackageSize2_OrderKey],
+			1,
+			'Product'[PackageSizeName],
+			1,
+			'Product'[Package_OrderKey],
+			1,
+			'Product'[PackageName],
+			1,
+			'Product'[MultiTypeSequence],
+			1,
+			'Product'[MultiTypeName],
+			1,
+			'Product'[ServingCode],
+			1,
+			'Product'[ServingName],
+			1
+		)
+
+EVALUATE
+	__DS0PrimaryWindowed
+
+ORDER BY
+	'445 Time'[YearID],
+	'445 Time'[YearDescription],
+	'445 Time'[QuarterID],
+	'445 Time'[QuarterDescription],
+	'445 Time'[PeriodDescription],
+	'445 Time'[WeekID],
+	'445 Time'[WeekDescription],
+	'McD'[McD],
+	'PM_RPP Channel'[PMChannelGroupCategorySequence],
+	'PM_RPP Channel'[PMChannelGroupCategoryName],
+	'PM_RPP Channel'[PMChannelGroupSequence],
+	'PM_RPP Channel'[PMChannelGroupName],
+	'Account'[KeyAccountTypeSequence],
+	'Account'[KeyAccountTypeName],
+	'Account'[AccountGroupCategoryCode],
+	'Account'[AccountGroupCategoryName],
+	'Account'[AccountGroupCode],
+	'Account'[AccountGroupName],
+	'Bottler'[All_Japan],
+	'Bottler'[AreaGroupSequence],
+	'Bottler'[AreaGroupName],
+	'Bottler'[AreaSequence],
+	'Bottler'[AreaName],
+	'Bottler'[BottlerSequence],
+	'Bottler'[BottlerName],
+	'Bottler'[RegionSequence],
+	'Bottler'[RegionName],
+	'Bottler'[SubRegionName],
+	'Product'[Category_OrderKey],
+	'Product'[CategoryName],
+	'Product'[PMBrandGroupSequence],
+	'Product'[PMBrandGroupName],
+	'Product'[PMBrandSequence],
+	'Product'[PMBrandName],
+	'Product'[BeverageCategoryCode],
+	'Product'[BeverageCategoryName],
+	'Product'[BeverageSubCategory_OrderKey],
+	'Product'[BeverageSubCategoryName],
+	'Product'[TM_OrderKey],
+	'Product'[TrademarkName],
+	'Product'[Brand_OrderKey],
+	'Product'[BrandName],
+	'Product'[BPGroup1_OrderKey],
+	'Product'[BeverageProductGroup1Name],
+	'Product'[BPGroup2_OrderKey],
+	'Product'[BeverageProductGroup2Name],
+	'Product'[BPGroup_OrderKey],
+	'Product'[BeverageProductGroupName],
+	'Product'[BevProduct_OrderKey],
+	'Product'[BeverageProductName],
+	'Product'[ProductGroupCategoryName],
+	'Product'[ProductGroup2_OrderKey],
+	'Product'[ProductGroupName],
+	'Product'[ProductName],
+	'Product'[ServiceTypeCode],
+	'Product'[ServiceTypeName],
+	'Product'[PackageType_OrderKey],
+	'Product'[PackageTypeName],
+	'Product'[PackageSize1_OrderKey],
+	'Product'[PackageSizeGroupName],
+	'Product'[PackageSize2_OrderKey],
+	'Product'[PackageSizeName],
+	'Product'[Package_OrderKey],
+	'Product'[PackageName],
+	'Product'[MultiTypeSequence],
+	'Product'[MultiTypeName],
+	'Product'[ServingCode],
+	'Product'[ServingName]</pre>
         </div>
 
-        <h3>DAXクエリを「書いて実行する」（学習の入口）</h3>
-        <div class="kv">
-          ・未経験者が詰まりやすい点: 「メジャーのDAX」と「DAXクエリ（EVALUATE〜）」は別物<br/>
-          ・チュートリアル: <a href="https://daxstudio.org/docs/tutorials/writing-dax-queries/" target="_blank" rel="noopener">https://daxstudio.org/docs/tutorials/writing-dax-queries/</a>
+        <p class="small">
+          注意：上のサンプルはテンプレとして残しているだけ。運用では「# Target Query」より下を毎回置き換える。
+        </p>
+      </section>
+
+      <section id="faq">
+        <h2><span class="anchor">#faq</span> よくある失敗（原因が切れるものだけ）</h2>
+
+        <div class="faq">
+          <details>
+            <summary>結果が501件しか出ない</summary>
+            <p class="small">
+              ・CokeGPTの出力に TOPN(501, …) が残っている。<br/>
+              ・Performance Analyzer由来のクエリにTOPN(501)が入る例は実際に報告がある。
+              <a href="https://community.powerbi.com/t5/Desktop/Remove-TOPN-from-query/td-p/2637768" target="_blank" rel="noopener">[Source]</a>
+            </p>
+          </details>
+
+          <details>
+            <summary>不要な列が消えない</summary>
+            <p class="small">
+              ・削除対象は「末尾が ID / Code / Sequence / OrderKey」と「IsGrandTotalRowTotal」だけ。命名がその規則に当たらない列は残る（仕様）。
+            </p>
+          </details>
+
+          <details>
+            <summary>時間軸の空白除外が入らない</summary>
+            <p class="small">
+              ・列名に Year / Date / Calendar を含む列が検出できないと Step 3 はスキップされる（仕様）。<br/>
+              ・対象の時間列の命名が規則外なら、TimeCol判定に引っかからない。
+            </p>
+          </details>
+
+          <details>
+            <summary>Power BIで見ている結果と一致しない</summary>
+            <p class="small">
+              ・フィルタ文脈（TREATAS 等）が不足している可能性が高い。<br/>
+              ・Performance Analyzerでコピーしたクエリに含まれていたフィルタVARが、整形後に落ちていないか確認する。
+            </p>
+          </details>
         </div>
       </section>
 
-      <section>
-        <h2>リンク集（公式）</h2>
-        <div class="kvs">
-          <div class="kv">
-            ・公式トップ: <a href="https://daxstudio.org/" target="_blank" rel="noopener">https://daxstudio.org/</a> [Source]
-            <a href="https://daxstudio.org/" target="_blank" rel="noopener">daxstudio.org</a>
-          </div>
-          <div class="kv">
-            ・公式ドキュメント入口: <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">https://daxstudio.org/docs/intro/</a> [Source]
-            <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">docs/intro</a>
-          </div>
-          <div class="kv">
-            ・ダウンロード: <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">https://daxstudio.org/downloads/</a> [Source]
-            <a href="https://daxstudio.org/downloads/" target="_blank" rel="noopener">downloads</a>
-          </div>
-          <div class="kv">
-            ・GitHub: <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">https://github.com/DaxStudio/DaxStudio</a> [Source]
-            <a href="https://github.com/DaxStudio/DaxStudio" target="_blank" rel="noopener">DaxStudio/DaxStudio</a>
-          </div>
-          <div class="kv">
-            ・Power BI Desktop 外部ツール（Microsoft Learn）:
-            <a href="https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools" target="_blank" rel="noopener">
-              https://learn.microsoft.com/ja-jp/power-bi/transform-model/desktop-external-tools
-            </a>
-            [Source]
-          </div>
-        </div>
+      <section id="refs">
+        <h2><span class="anchor">#refs</span> 参照（最小限）</h2>
+        <ul class="bullets">
+          <li>Performance Analyzer（Microsoft Learn）: <a href="https://learn.microsoft.com/ja-jp/power-bi/create-reports/performance-analyzer" target="_blank" rel="noopener">https://learn.microsoft.com/ja-jp/power-bi/create-reports/performance-analyzer</a> <a href="https://learn.microsoft.com/ja-jp/power-bi/create-reports/performance-analyzer" target="_blank" rel="noopener">[Source]</a></li>
+          <li>TOPN(501) 混入の実例（コミュニティ）: <a href="https://community.powerbi.com/t5/Desktop/Remove-TOPN-from-query/td-p/2637768" target="_blank" rel="noopener">https://community.powerbi.com/t5/Desktop/Remove-TOPN-from-query/td-p/2637768</a> <a href="https://community.powerbi.com/t5/Desktop/Remove-TOPN-from-query/td-p/2637768" target="_blank" rel="noopener">[Source]</a></li>
+          <li>DAX Studio ドキュメント入口: <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">https://daxstudio.org/docs/intro/</a> <a href="https://daxstudio.org/docs/intro/" target="_blank" rel="noopener">[Source]</a></li>
+        </ul>
       </section>
+
+      <footer>
+        公開サイトの更新は index.html を差し替えてコミットするだけ（GitHub Pagesが自動更新）。
+      </footer>
     </main>
-
-    <footer>
-      このページは社内共有用の要約。公式情報は各リンク先を参照。
-    </footer>
   </div>
+
+  <script>
+    (function(){
+      const wrap = document.querySelector('[data-copywrap]');
+      if(!wrap) return;
+      const btn = wrap.querySelector('[data-copybtn]');
+      const pre = wrap.querySelector('[data-codetext]');
+      if(!btn || !pre) return;
+
+      btn.addEventListener('click', async () => {
+        const text = pre.textContent;
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'コピー済み';
+          setTimeout(()=> btn.textContent = old, 1000);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const old = btn.textContent;
+          btn.textContent = 'コピー済み';
+          setTimeout(()=> btn.textContent = old, 1000);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
